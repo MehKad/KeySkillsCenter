@@ -6,40 +6,38 @@ import {
   Text,
   View,
   TextInput,
-  Linking,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-// import firebase from "firebase/compat";
+import Signup from "./Signup";
+import firebase from "firebase/compat";
 
 export default class Login extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     email: "",
-  //     password: "",
-  //     visible: false,
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      password: "",
+    };
+  }
 
-  // onSignIn = () => {
-  //   const { email, password } = this.state;
-  //   firebase
-  //     .auth()
-  //     .signInWithEmailAndPassword(email, password)
-  //     .then((result) => {
-  //       console.log(`Sign in: ${email}, ${password}`);
-  //     })
-  //     .catch((error) => alert(error));
-  //   this.onToggleSnackBar();
-  // };
+  onSignIn = () => {
+    const { email, password } = this.state;
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((result) => {
+        console.log(`Sign in: ${email}, ${password}`);
+      })
+      .catch((error) => alert(error));
+  };
 
   render() {
-    // const { visible } = this.state;
+    const { navigation } = this.props;
     return (
       <KeyboardAwareScrollView>
         <View style={styles.parent}>
           <View style={styles.container}>
-            <Image source={require("./Images/KK.png")} style={styles.img} />
+            <Image source={require("../Images/KK.png")} style={styles.img} />
             <Text style={styles.title}>KeySkills Center</Text>
           </View>
 
@@ -47,18 +45,18 @@ export default class Login extends Component {
             <TextInput
               style={styles.input}
               placeholder="Email"
-              // onChangeText={(email) => this.setState({ email })}
               keyboardType="email-address"
+              onChangeText={(email) => this.setState({ email })}
             />
             <TextInput
               style={styles.input}
               placeholder="Password"
-              // onChangeText={(password) => this.setState({ password })}
+              onChangeText={(password) => this.setState({ password })}
               secureTextEntry
             />
             <TouchableOpacity
               style={styles.button}
-              // onPress={() => this.onSignIn()}
+              onPress={() => this.onSignIn()}
             >
               <Text style={{ color: "#fff", fontWeight: "bold" }}>
                 Se Connecter
@@ -68,7 +66,7 @@ export default class Login extends Component {
 
           <View style={styles.footer}>
             <Text>Pas de compte?</Text>
-            <TouchableOpacity onPress={() => console.log("pressed signup")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
               <Text style={styles.contact}>Sign up</Text>
             </TouchableOpacity>
           </View>

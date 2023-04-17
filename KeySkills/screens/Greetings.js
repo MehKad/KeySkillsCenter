@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
-import logo from "./Images/Keyskills.png";
+import logo from "../Images/Keyskills.png";
+import Login from "./Login";
 
 class Greetings extends Component {
   render() {
+    const { navigation } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -18,7 +21,7 @@ class Greetings extends Component {
           <Button
             mode="contained"
             style={styles.button}
-            onPress={() => console.log("Pressed")}
+            onPress={() => navigation.navigate("Login")}
           >
             Get Started
           </Button>

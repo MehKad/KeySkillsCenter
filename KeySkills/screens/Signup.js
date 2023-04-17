@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from "expo-image-picker";
+import Login from "./Login";
 
 export default class Signup extends Component {
   state = {
@@ -31,12 +32,13 @@ export default class Signup extends Component {
   };
 
   render() {
+    const { navigation } = this.props;
     let { image } = this.state;
     return (
       <KeyboardAwareScrollView>
         <View style={styles.parent}>
           <View style={styles.container}>
-            <Image source={require("./Images/KK.png")} style={styles.img} />
+            <Image source={require("../Images/KK.png")} style={styles.img} />
             <Text style={styles.title}>KeySkills Center</Text>
           </View>
 
@@ -86,7 +88,7 @@ export default class Signup extends Component {
 
           <View style={styles.footer}>
             <Text>Already have one?</Text>
-            <TouchableOpacity onPress={() => console.log("pressed signup")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.contact}>Login</Text>
             </TouchableOpacity>
           </View>
