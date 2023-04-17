@@ -1,12 +1,11 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import React, { Component } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import Greetings from "../screens/greetings";
-import Login from "../screens/Login";
-import Signup from "../screens/Signup";
 import * as firebase from "firebase/compat";
 
-const Stack = createStackNavigator();
+import AuthStack from "./authStack";
+import AppStack from "./appStack";
+
+//Firebase config
 
 const firebaseConfig = {
   apiKey: "AIzaSyCk2F3xeaJlbmGRn5X2plycrjHX-9yQ8Cg",
@@ -22,28 +21,26 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const Index = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Greetings">
-        <Stack.Screen
-          name="Greetings"
-          component={Greetings}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
+export default class index extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loggedIn: false,
+    };
+  }
 
-export default Index;
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.setState({ loggedIn: user });
+    });
+  }
+
+  render() {
+    const { loggedIn } = this.state;
+    return (
+      <NavigationContainer>
+        {loggedIn ? <AppStack /> : <AuthStack />}
+      </NavigationContainer>
+    );
+  }
+}
