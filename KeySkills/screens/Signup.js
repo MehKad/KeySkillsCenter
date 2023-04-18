@@ -9,9 +9,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Login from "./Login";
-import firebase from "firebase/compat";
-import { StackActions } from "@react-navigation/native";
-import { NavigationActions } from "@react-navigation/native";
+import { createUser } from "../components/Functions";
 
 export default class Signup extends Component {
   state = {
@@ -24,31 +22,9 @@ export default class Signup extends Component {
 
   handleCreateAccount = async () => {
     const { email, password, fullName, phone, dateBirth } = this.state;
-    const { navigation } = this.props;
-
-    try {
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
-      const userId = firebase.auth().currentUser.uid;
-
-      const dateOfBirthTimestamp = new Date(dateBirth).getTime();
-
-      await firebase.firestore().collection("users").doc(userId).set({
-        admin: null,
-        fullName,
-        dateBirth: dateOfBirthTimestamp,
-        phone,
-        email,
-      });
-
-      console.log(`Created new user: ${email}, ${password}`);
-      const resetAction = StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: "Login" })],
-      });
-      navigation.dispatch(resetAction);
-    } catch (error) {
-      console.log(error);
-    }
+    createUser(email, password, fullName, phone, dateBirth).catch((error) =>
+      alert(error)
+    );
   };
 
   render() {
@@ -82,15 +58,13 @@ export default class Signup extends Component {
             <TextInput
               style={styles.input}
               placeholder="Phone"
-              keyboardType="numeric"
               maxLength={10}
               onChangeText={(phone) => this.setState({ phone })}
             />
             <TextInput
               style={styles.input}
-              placeholder="date of birth (MMDDYYYY)"
+              placeholder="date of birth YYYY-MM-DD"
               keyboardType="numeric"
-              maxLength={8}
               onChangeText={(dateBirth) => this.setState({ dateBirth })}
             />
             <TouchableOpacity

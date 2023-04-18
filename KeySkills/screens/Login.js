@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Signup from "./Signup";
-import firebase from "firebase/compat";
+import { signIn } from "../components/Functions";
 
 export default class Login extends Component {
   constructor(props) {
@@ -22,13 +22,7 @@ export default class Login extends Component {
 
   onSignIn = () => {
     const { email, password } = this.state;
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        console.log(`Sign in: ${email}, ${password}`);
-      })
-      .catch((error) => alert(error));
+    signIn(email, password).catch((error) => alert(error));
   };
 
   render() {
