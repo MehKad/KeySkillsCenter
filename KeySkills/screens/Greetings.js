@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
-import logo from "../Images/Keyskills.png";
+import logo from "../assets/Keyskills.png";
 import Login from "./Login";
 
 class Greetings extends Component {

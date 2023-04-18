@@ -31,7 +31,7 @@ export default class Login extends Component {
       <KeyboardAwareScrollView>
         <View style={styles.parent}>
           <View style={styles.container}>
-            <Image source={require("../Images/KK.png")} style={styles.img} />
+            <Image source={require("../assets/KK.png")} style={styles.img} />
             <Text style={styles.title}>KeySkills Center</Text>
           </View>
 
