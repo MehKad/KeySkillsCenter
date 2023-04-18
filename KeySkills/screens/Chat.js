@@ -1,7 +1,9 @@
 import { Text, StyleSheet, View } from "react-native";
 import React, { Component } from "react";
 
-export default class Chat extends Component {
+import { connect } from "react-redux";
+
+class Chat extends Component {
   render() {
     return (
       <View style={styles.container}>
@@ -18,3 +20,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+const mapStateToProps = (store) => ({
+  currentUser: store.userState.currentUser,
+});
+
+export default connect(mapStateToProps, null)(Chat);

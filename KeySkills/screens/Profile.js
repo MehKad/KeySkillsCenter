@@ -2,7 +2,9 @@ import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import React, { Component } from "react";
 import { onLogOut } from "../components/Functions";
 
-export default class Profile extends Component {
+import { connect } from "react-redux";
+
+class Profile extends Component {
   render() {
     return (
       <View style={styles.container}>
@@ -32,3 +34,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+const mapStateToProps = (store) => ({
+  currentUser: store.userState.currentUser,
+});
+
+export default connect(mapStateToProps, null)(Profile);
