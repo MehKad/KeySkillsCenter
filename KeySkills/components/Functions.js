@@ -43,3 +43,11 @@ export const createUser = async (
     return false;
   }
 };
+export const onLogOut = () => {
+  firebase
+    .auth()
+    .signOut()
+    .then(() => console.log("Signed out"))
+    .catch((error) => alert(error));
+  return true;
+};
