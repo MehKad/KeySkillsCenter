@@ -1,4 +1,5 @@
 import firebase from "firebase/compat";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export const signIn = (email, password) => {
   return firebase
@@ -15,9 +16,9 @@ export const createUser = async (
   password,
   fullName,
   phone,
-  dateBirth
+  dateBirth,
+  image
 ) => {
-  //Validating date
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(dateBirth)) {
     throw new Error("Invalid date format");
@@ -29,14 +30,24 @@ export const createUser = async (
     const dateOfBirthTimestamp = firebase.firestore.Timestamp.fromDate(
       new Date(dateBirth)
     );
+    const response = await fetch(image);
+    const blob = await response.blob();
+    const childPath = `${userId}`;
+    const storage = getStorage();
+    const storageRef = ref(storage, childPath);
+    const snapshot = await uploadBytes(storageRef, blob);
+    console.log("Image success");
+    const profilePic = await getDownloadURL(snapshot.ref);
     await firebase.firestore().collection("users").doc(userId).set({
       admin: false,
       fullName,
       dateBirth: dateOfBirthTimestamp,
       phone,
       email,
+      profilePic,
     });
-    console.log(`Created new user: ${email}, ${password}`);
+
+    console.log(`Created new user: ${email}, ${password}, uid: ${userId}`);
     return true;
   } catch (error) {
     console.log(error);

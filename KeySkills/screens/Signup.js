@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Login from "./Login";
+import * as ImagePicker from "expo-image-picker";
+import "firebase/storage";
 import { createUser } from "../components/Functions";
 
 export default class Signup extends Component {
@@ -18,17 +20,32 @@ export default class Signup extends Component {
     fullName: "",
     phone: "",
     password: "",
+    image: null,
+  };
+
+  handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+      base64: true,
+      exif: true,
+    });
+    if (!result.canceled) {
+      this.setState({ image: result.assets[0].uri });
+    }
   };
 
   handleCreateAccount = async () => {
-    const { email, password, fullName, phone, dateBirth } = this.state;
-    createUser(email, password, fullName, phone, dateBirth).catch((error) =>
-      alert(error)
+    const { email, password, fullName, phone, dateBirth, image } = this.state;
+    createUser(email, password, fullName, phone, dateBirth, image).catch(
+      (error) => alert(error)
     );
   };
 
   render() {
     const { navigation } = this.props;
+    const { image } = this.state;
     return (
       <KeyboardAwareScrollView>
         <View style={styles.parent}>
@@ -38,6 +55,16 @@ export default class Signup extends Component {
           </View>
 
           <View style={styles.body}>
+            <TouchableOpacity onPress={this.handlePickImage}>
+              {image && <Image source={{ uri: image }} style={styles.image} />}
+              {!image && (
+                <Image
+                  source={require("../assets/profile_placeholder.png")}
+                  style={styles.image}
+                />
+              )}
+            </TouchableOpacity>
+
             <TextInput
               style={styles.input}
               placeholder="Full name"
@@ -143,5 +170,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 15,
     textAlign: "center",
+  },
+  image: {
+    width: 350,
+    height: 125,
   },
 });
