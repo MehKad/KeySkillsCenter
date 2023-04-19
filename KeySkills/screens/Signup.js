@@ -27,6 +27,7 @@ export default class Signup extends Component {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [4, 4],
       quality: 1,
       base64: true,
       exif: true,
@@ -49,11 +50,6 @@ export default class Signup extends Component {
     return (
       <KeyboardAwareScrollView>
         <View style={styles.parent}>
-          <View style={styles.container}>
-            <Image source={require("../assets/KK.png")} style={styles.img} />
-            <Text style={styles.title}>KeySkills Center</Text>
-          </View>
-
           <View style={styles.body}>
             <TouchableOpacity onPress={this.handlePickImage}>
               {image && <Image source={{ uri: image }} style={styles.image} />}
@@ -172,7 +168,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   image: {
-    width: 350,
-    height: 125,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
   },
 });
