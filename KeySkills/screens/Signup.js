@@ -130,10 +130,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 1,
   },
-  img: {
-    width: 350,
-    height: 125,
-  },
   title: {
     fontSize: 25,
     fontWeight: "bold",
