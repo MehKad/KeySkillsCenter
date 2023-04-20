@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  Modal,
 } from "react-native";
 import moment from "moment";
 import React, { Component } from "react";
@@ -13,6 +14,14 @@ import { onLogOut } from "../components/Functions";
 import { connect } from "react-redux";
 
 class Profile extends Component {
+  state = {
+    modalVisible: true,
+  };
+
+  toggleModal = () => {
+    this.setState({ modalVisible: !this.state.modalVisible });
+  };
+
   render() {
     const { currentUser } = this.props;
     return (
@@ -43,10 +52,26 @@ class Profile extends Component {
           >
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={this.toggleModal}
+          >
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
         </View>
+
+        <Modal
+          visible={this.state.modalVisible}
+          transparent
+          animationType="slide"
+        >
+          <View style={styles.modalContainer}>
+            <Text>Edit Profile</Text>
+            <TouchableOpacity onPress={this.toggleModal}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -113,6 +138,21 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: "#386BF6",
     fontWeight: "bold",
+  },
+  modalContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    padding: 20,
+    width: "90%",
+    height: "90%",
+    alignSelf: "center",
+    marginTop: "10%",
+    borderWidth: 1,
+  },
+  closeButtonText: {
+    color: "#386BF6",
+    fontWeight: "bold",
+    marginTop: 20,
   },
 });
 
