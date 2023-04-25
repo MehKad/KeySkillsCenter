@@ -41,13 +41,12 @@ class Profile extends Component {
       prevDate: prevDate,
       modalVisible: !this.state.modalVisible,
     });
-    console.log(this.state.prevDate);
   };
 
   handleSaveChanges = () => {
-    const { currentUser } = this.props;
     const uid = firebase.auth().currentUser.uid;
-    const { prevEmail, prevName, prevPhone, prevImage } = this.state;
+    const { prevEmail, prevName, prevPhone, prevImage, prevDate } = this.state;
+    const dateBirth = moment(prevDate, "DD/MM/YYYY").toDate();
     firebase
       .firestore()
       .collection("users")
@@ -57,6 +56,7 @@ class Profile extends Component {
         phone: prevPhone,
         email: prevEmail,
         profilePic: prevImage,
+        dateBirth: dateBirth,
       })
       .then(() => {
         this.setState({ posting: false });
@@ -67,7 +67,7 @@ class Profile extends Component {
 
   render() {
     const { currentUser } = this.props;
-    const { prevImage, prevEmail, prevName, prevPhone } = this.state;
+    const { prevImage, prevEmail, prevName, prevPhone, prevDate } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.top}>
@@ -146,6 +146,12 @@ class Profile extends Component {
                   value={prevEmail}
                   keyboardType="email-address"
                   onChangeText={(prevEmail) => this.setState({ prevEmail })}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={prevDate}
+                  placeholder="date of birth DD/MM/YYYY"
+                  onChangeText={(prevDate) => this.setState({ prevDate })}
                 />
               </View>
             </View>
