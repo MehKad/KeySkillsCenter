@@ -12,6 +12,7 @@
     "@expo/vector-icons": "^13.0.0",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-community/image-picker-ios": "^1.0.1",
+    "@react-native-firebase/storage": "^17.4.2",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",

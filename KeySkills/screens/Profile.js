@@ -12,21 +12,20 @@ import moment from "moment";
 import React, { Component } from "react";
 import { onLogOut } from "../components/Functions";
 import { connect } from "react-redux";
-import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import firebase from "firebase/compat";
+import * as ImagePicker from "expo-image-picker";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 class Profile extends Component {
-  constructor(props) {
-    super(props);
-  }
   state = {
     modalVisible: false,
     posting: true,
     prevName: "",
     prevPhone: "",
     prevEmail: "",
-    prevImage: null,
     prevDate: "",
+    prevImage: null,
   };
 
   toggleModal = () => {
@@ -35,17 +34,40 @@ class Profile extends Component {
     const prevDate = moment(date.seconds * 1000).format("DD/MM/YYYY");
     this.setState({
       prevName: currentUser.fullName,
+      prevImage: currentUser.profilePic,
       prevPhone: currentUser.phone,
       prevEmail: currentUser.email,
-      prevImage: currentUser.profilePic,
       prevDate: prevDate,
       modalVisible: !this.state.modalVisible,
     });
   };
 
+  handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true,
+      exif: true,
+    });
+    if (!result.canceled) {
+      const uid = firebase.auth().currentUser.uid;
+      const newIm = result.assets[0].uri;
+      const response = await fetch(newIm);
+      const blob = await response.blob();
+      const childPath = `users/${uid}/${Math.random().toString(36)}`;
+      const storage = getStorage();
+      const storageRef = ref(storage, childPath);
+      const snapshot = await uploadBytes(storageRef, blob);
+      const profilePic = await getDownloadURL(snapshot.ref);
+      this.setState({ prevImage: profilePic });
+    }
+  };
+
   handleSaveChanges = () => {
     const uid = firebase.auth().currentUser.uid;
-    const { prevEmail, prevName, prevPhone, prevImage, prevDate } = this.state;
+    const { prevEmail, prevName, prevPhone, prevDate, prevImage } = this.state;
     const dateBirth = moment(prevDate, "DD/MM/YYYY").toDate();
     firebase
       .firestore()
@@ -55,19 +77,19 @@ class Profile extends Component {
         fullName: prevName,
         phone: prevPhone,
         email: prevEmail,
-        profilePic: prevImage,
         dateBirth: dateBirth,
+        profilePic: prevImage,
       })
       .then(() => {
         this.setState({ posting: false });
         this.toggleModal();
-        console.log("user succesfully modified");
+        console.log("user successfully modified");
       });
   };
 
   render() {
     const { currentUser } = this.props;
-    const { prevImage, prevEmail, prevName, prevPhone, prevDate } = this.state;
+    const { prevEmail, prevName, prevPhone, prevDate, prevImage } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.top}>
@@ -113,19 +135,9 @@ class Profile extends Component {
               style={styles.closeIcon}
             />
             <View style={styles.content}>
-              <View style={{ alignItems: "center" }}>
-                <TouchableOpacity>
-                  {prevImage && (
-                    <Image source={{ uri: prevImage }} style={styles.image} />
-                  )}
-                  {!prevImage && (
-                    <Image
-                      source={require("../assets/profile_placeholder.png")}
-                      style={styles.image}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity onPress={this.handlePickImage}>
+                <Image source={{ uri: prevImage }} style={styles.image} />
+              </TouchableOpacity>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
