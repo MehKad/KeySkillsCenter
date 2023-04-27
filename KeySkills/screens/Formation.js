@@ -1,13 +1,16 @@
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal } from "react-native";
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import firebase from "firebase/compat";
+import { AntDesign } from "@expo/vector-icons";
 
 class Formation extends Component {
   state = {
     Name: [],
     Lessons: [],
+    showModal: false,
+    secondMod: false,
   };
 
   componentDidMount() {
@@ -37,26 +40,66 @@ class Formation extends Component {
           }
         });
       });
+    this.openModal();
+  };
+  openModal = () => {
+    this.setState({ showModal: true });
+  };
+  closeModal = () => {
+    this.setState({ showModal: false });
+  };
+  openSecondModal = () => {
+    this.setState({ secondMod: true });
+  };
+  closeSecondModal = () => {
+    this.setState({ secondMod: false });
   };
 
   render() {
-    const { Name, Lessons } = this.state;
+    const { Name, Lessons, showModal, secondMod } = this.state;
     return (
       <View style={styles.container}>
         <Text>Formation : </Text>
         <View>
           {Name.map((title) => (
             <TouchableOpacity
+              key={title}
               style={styles.small}
               onPress={() => this.fetchLessons(title)}
             >
               <Text style={{ color: "white" }}>{title}</Text>
             </TouchableOpacity>
           ))}
-          {Lessons.map((cours) => (
-            <Text>{cours}</Text>
-          ))}
         </View>
+        <Modal visible={showModal} animationType="slide">
+          <View style={styles.modalContainer}>
+            <AntDesign
+              name="close"
+              size={24}
+              onPress={this.closeModal}
+              style={{ alignSelf: "flex-end" }}
+            />
+            <Text style={styles.title}>Lessons: </Text>
+            {Lessons.map((cours) => (
+              <TouchableOpacity
+                style={styles.small}
+                onPress={this.openSecondModal}
+              >
+                <Text>{cours}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Modal>
+        <Modal visible={secondMod} animationType="slide">
+          <View>
+            <AntDesign
+              name="close"
+              size={24}
+              onPress={this.closeSecondModal}
+              style={{ alignSelf: "flex-end" }}
+            />
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -68,14 +111,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  big: {
-    backgroundColor: "blue",
-    width: 200,
-    height: 50,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   small: {
     backgroundColor: "red",
     borderRadius: 50,
@@ -83,6 +118,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 30,
     padding: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 20,
   },
 });
 
