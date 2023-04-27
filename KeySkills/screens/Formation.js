@@ -11,11 +11,25 @@ class Formation extends Component {
     Lessons: [],
     showModal: false,
     secondMod: false,
+    dourous: {},
   };
 
   componentDidMount() {
     this.fetchFormation();
   }
+
+  openModal = () => {
+    this.setState({ showModal: true });
+  };
+  closeModal = () => {
+    this.setState({ showModal: false });
+  };
+  openSecondModal = () => {
+    this.setState({ secondMod: true });
+  };
+  closeSecondModal = () => {
+    this.setState({ secondMod: false });
+  };
 
   fetchFormation = () => {
     return firebase
@@ -42,21 +56,26 @@ class Formation extends Component {
       });
     this.openModal();
   };
-  openModal = () => {
-    this.setState({ showModal: true });
-  };
-  closeModal = () => {
-    this.setState({ showModal: false });
-  };
-  openSecondModal = () => {
-    this.setState({ secondMod: true });
-  };
-  closeSecondModal = () => {
-    this.setState({ secondMod: false });
+
+  fetchAllData = (courses) => {
+    firebase
+      .firestore()
+      .collection("Lessons")
+      .doc(courses)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.data();
+        const dourous = {};
+        Object.keys(data).forEach((title) => {
+          const info = data[title];
+          dourous[title] = info;
+        });
+        this.setState({ dourous });
+      });
+    this.openSecondModal();
   };
 
   render() {
-    const { Name, Lessons, showModal, secondMod } = this.state;
+    const { Name, Lessons, showModal, secondMod, dourous } = this.state;
     return (
       <View style={styles.container}>
         <Text>Formation : </Text>
@@ -83,7 +102,7 @@ class Formation extends Component {
             {Lessons.map((cours) => (
               <TouchableOpacity
                 style={styles.small}
-                onPress={this.openSecondModal}
+                onPress={() => this.fetchAllData(cours)}
               >
                 <Text>{cours}</Text>
               </TouchableOpacity>
@@ -98,6 +117,16 @@ class Formation extends Component {
               onPress={this.closeSecondModal}
               style={{ alignSelf: "flex-end" }}
             />
+            {Object.keys(dourous).map((title) => (
+              <View key={title}>
+                <Text>{title}</Text>
+                {Array.isArray(dourous[title]) ? (
+                  dourous[title].map((item) => <Text key={item}>{item}</Text>)
+                ) : (
+                  <Text>{dourous[title]}</Text>
+                )}
+              </View>
+            ))}
           </View>
         </Modal>
       </View>
