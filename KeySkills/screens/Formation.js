@@ -3,13 +3,15 @@ import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import firebase from "firebase/compat";
-import { AntDesign } from "@expo/vector-icons";
+
+import FirstModal from "../components/firstModal";
+import SecondModal from "../components/secondModal";
 
 class Formation extends Component {
   state = {
     Name: [],
     Lessons: [],
-    showModal: false,
+    firstMod: false,
     secondMod: false,
     dourous: {},
   };
@@ -18,17 +20,11 @@ class Formation extends Component {
     this.fetchFormation();
   }
 
-  openModal = () => {
-    this.setState({ showModal: true });
+  handleFirst = () => {
+    this.setState((prevState) => ({ firstMod: !prevState.firstMod }));
   };
-  closeModal = () => {
-    this.setState({ showModal: false });
-  };
-  openSecondModal = () => {
-    this.setState({ secondMod: true });
-  };
-  closeSecondModal = () => {
-    this.setState({ secondMod: false });
+  handleSecond = () => {
+    this.setState((prevState) => ({ secondMod: !prevState.secondMod }));
   };
 
   fetchFormation = () => {
@@ -54,7 +50,7 @@ class Formation extends Component {
           }
         });
       });
-    this.openModal();
+    this.handleFirst();
   };
 
   fetchAllData = (courses) => {
@@ -71,11 +67,11 @@ class Formation extends Component {
         });
         this.setState({ dourous });
       });
-    this.openSecondModal();
+    this.handleSecond();
   };
 
   render() {
-    const { Name, Lessons, showModal, secondMod, dourous } = this.state;
+    const { Name, Lessons, firstMod, secondMod, dourous } = this.state;
     return (
       <View style={styles.container}>
         <Text>Formation : </Text>
@@ -90,45 +86,17 @@ class Formation extends Component {
             </TouchableOpacity>
           ))}
         </View>
-        <Modal visible={showModal} animationType="slide">
-          <View style={styles.modalContainer}>
-            <AntDesign
-              name="close"
-              size={24}
-              onPress={this.closeModal}
-              style={{ alignSelf: "flex-end" }}
-            />
-            <Text style={styles.title}>Lessons: </Text>
-            {Lessons.map((cours) => (
-              <TouchableOpacity
-                style={styles.small}
-                onPress={() => this.fetchAllData(cours)}
-              >
-                <Text>{cours}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </Modal>
-        <Modal visible={secondMod} animationType="slide">
-          <View>
-            <AntDesign
-              name="close"
-              size={24}
-              onPress={this.closeSecondModal}
-              style={{ alignSelf: "flex-end" }}
-            />
-            {Object.keys(dourous).map((title) => (
-              <View key={title}>
-                <Text>{title}</Text>
-                {Array.isArray(dourous[title]) ? (
-                  dourous[title].map((item) => <Text key={item}>{item}</Text>)
-                ) : (
-                  <Text>{dourous[title]}</Text>
-                )}
-              </View>
-            ))}
-          </View>
-        </Modal>
+        <FirstModal
+          showModal={firstMod}
+          closeModal={this.handleFirst}
+          Lessons={Lessons}
+          fetchAllData={this.fetchAllData}
+        />
+        <SecondModal
+          secondMod={secondMod}
+          closeSecondModal={this.handleSecond}
+          dourous={dourous}
+        />
       </View>
     );
   }
