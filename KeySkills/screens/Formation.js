@@ -119,11 +119,13 @@ class Formation extends Component {
               <Text style={{ color: "white" }} key={title}>
                 {title}
               </Text>
-              <AntDesign
-                name="delete"
-                size={24}
-                onPress={() => this.deleteF(title)}
-              />
+              {currentUser.admin && (
+                <AntDesign
+                  name="delete"
+                  size={24}
+                  onPress={() => this.deleteF(title)}
+                />
+              )}
             </TouchableOpacity>
           ))}
         </View>
