@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function FirstModal({
@@ -17,16 +24,20 @@ export default function FirstModal({
           onPress={closeModal}
           style={{ alignSelf: "flex-end" }}
         />
-        <Text style={styles.title}>Lessons: </Text>
-        {Lessons.map((cours) => (
-          <TouchableOpacity
-            style={styles.small}
-            onPress={() => fetchAllData(cours)}
-            key={cours}
-          >
-            <Text>{cours}</Text>
-          </TouchableOpacity>
-        ))}
+        <View style={styles.header}>
+          <Text style={styles.title}>Lessons : </Text>
+        </View>
+        <View style={styles.lescours}>
+          {Lessons.map((cours) => (
+            <TouchableOpacity
+              style={styles.small}
+              onPress={() => fetchAllData(cours)}
+              key={cours}
+            >
+              <Text style={{ color: "white" }}>{cours}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </Modal>
   );
@@ -35,13 +46,18 @@ export default function FirstModal({
 const styles = StyleSheet.create({
   small: {
     backgroundColor: "red",
-    borderRadius: 50,
+    borderRadius: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    margin: 15,
+    width: "40%",
+    height: "10%",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 30,
-    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
   },
   modalContainer: {
+    marginTop: StatusBar.currentHeight,
     flex: 1,
     alignItems: "center",
   },
@@ -49,5 +65,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginVertical: 20,
+  },
+  lescours: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    marginTop: 20,
   },
 });
