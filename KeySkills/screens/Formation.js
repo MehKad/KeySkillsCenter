@@ -1,4 +1,11 @@
-import { Text, StyleSheet, View, TouchableOpacity, Modal } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+} from "react-native";
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
@@ -72,10 +79,11 @@ class Formation extends Component {
 
   render() {
     const { Name, Lessons, firstMod, secondMod, dourous } = this.state;
+    const { currentUser } = this.props;
     return (
       <View style={styles.container}>
         <Text>Formation : </Text>
-        <View>
+        <View style={styles.lescours}>
           {Name.map((title) => (
             <TouchableOpacity
               key={title}
@@ -86,6 +94,7 @@ class Formation extends Component {
             </TouchableOpacity>
           ))}
         </View>
+        {currentUser.admin ? console.log("admin") : console.log("not")}
         <FirstModal
           showModal={firstMod}
           closeModal={this.handleFirst}
@@ -104,17 +113,28 @@ class Formation extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: StatusBar.currentHeight,
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+  },
+  lescours: {
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    flexWrap: "wrap",
+    marginTop: 20,
   },
   small: {
     backgroundColor: "red",
-    borderRadius: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    margin: 15,
+    width: "40%",
+    aspectRatio: 1,
   },
   modalContainer: {
     flex: 1,

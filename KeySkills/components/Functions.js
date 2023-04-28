@@ -1,7 +1,7 @@
 import firebase from "firebase/compat";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
-export const signIn = (email, password) => {
+export const signIn = async (email, password) => {
   return firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
@@ -54,6 +54,7 @@ export const createUser = async (
     return false;
   }
 };
+
 export const onLogOut = () => {
   firebase
     .auth()
