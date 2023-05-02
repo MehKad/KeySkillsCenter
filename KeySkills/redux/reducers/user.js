@@ -1,7 +1,8 @@
-import { USER_STATE_CHANGE } from "../constants";
+import { USER_STATE_CHANGE, FETCH_CURRENT_USER_LESSONS } from "../constants";
 
 const initialState = {
   currentUser: null,
+  testtest: [],
 };
 
 export const user = (state = initialState, action) => {
@@ -10,6 +11,12 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         currentUser: action.currentUser,
+      };
+      break;
+    case FETCH_CURRENT_USER_LESSONS:
+      return {
+        ...state,
+        testtest: action.testtest,
       };
       break;
     default:
