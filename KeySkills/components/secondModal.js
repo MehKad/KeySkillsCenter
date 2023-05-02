@@ -12,22 +12,23 @@ export default function SecondModal({ secondMod, closeSecondModal, dourous }) {
           onPress={closeSecondModal}
           style={styles.closeButton}
         />
-        {Object.keys(dourous)
-          .filter((title) => typeof dourous[title] !== "boolean")
-          .map((title) => (
-            <View key={title} style={styles.item}>
-              <Text style={styles.title}>{title}</Text>
-              {Array.isArray(dourous[title]) ? (
-                dourous[title].map((item) => (
-                  <Text key={item} style={styles.content}>
-                    {item}
-                  </Text>
-                ))
-              ) : (
-                <Text style={styles.content}>{dourous[title]}</Text>
-              )}
-            </View>
-          ))}
+        {dourous &&
+          Object.keys(dourous)
+            .filter((title) => typeof dourous[title] !== "boolean")
+            .map((title) => (
+              <View key={title} style={styles.item}>
+                <Text style={styles.title}>{title}</Text>
+                {Array.isArray(dourous[title]) ? (
+                  dourous[title].map((item) => (
+                    <Text key={item} style={styles.content}>
+                      {item}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={styles.content}>{dourous[title]}</Text>
+                )}
+              </View>
+            ))}
       </View>
     </Modal>
   );

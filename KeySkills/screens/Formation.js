@@ -16,21 +16,15 @@ import SecondModal from "../components/secondModal";
 
 import { AnimatedFAB, TextInput } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
+import { fetchAllData, fetchAllLessons } from "../redux/actions";
 
 class Formation extends Component {
   state = {
-    Name: [],
-    Lessons: [],
     firstMod: false,
     secondMod: false,
-    dourous: {},
     addMod: false,
     newForm: "",
   };
-
-  componentDidMount() {
-    this.fetchFormation();
-  }
 
   handleFirst = () => {
     this.setState((prevState) => ({ firstMod: !prevState.firstMod }));
@@ -42,43 +36,15 @@ class Formation extends Component {
     this.setState((prevState) => ({ addMod: !prevState.addMod }));
   };
 
-  fetchFormation = () => {
-    return firebase
-      .firestore()
-      .collection("formation")
-      .onSnapshot((snapshot) => {
-        const formationNames = snapshot.docs.map((formation) => formation.id);
-        this.setState({ Name: formationNames });
-      });
-  };
-
   fetchLessons = (title) => {
-    this.setState({ Lessons: [] });
-    firebase
-      .firestore()
-      .collection("Lessons")
-      .where(title, "==", true)
-      .onSnapshot((snapshot) => {
-        const lessonNames = snapshot.docs.map((lesson) => lesson.id);
-        this.setState({ Lessons: lessonNames });
-      });
+    const { dispatch } = this.props;
+    dispatch(fetchAllLessons(title));
     this.handleFirst();
   };
 
-  fetchAllData = (courses) => {
-    firebase
-      .firestore()
-      .collection("Lessons")
-      .doc(courses)
-      .onSnapshot((snapshot) => {
-        const data = snapshot.data();
-        const dourous = {};
-        Object.keys(data).forEach((title) => {
-          const info = data[title];
-          dourous[title] = info;
-        });
-        this.setState({ dourous });
-      });
+  fetchData = (courses) => {
+    const { dispatch } = this.props;
+    dispatch(fetchAllData(courses));
     this.handleSecond();
   };
 
@@ -101,16 +67,15 @@ class Formation extends Component {
   };
 
   render() {
-    const { Name, Lessons, firstMod, secondMod, dourous, addMod, newForm } =
-      this.state;
-    const { currentUser } = this.props;
+    const { firstMod, secondMod, addMod } = this.state;
+    const { currentUser, formations, lessons, data } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Formation : </Text>
         </View>
         <View style={styles.lescours}>
-          {Name.map((title) => (
+          {formations.map((title) => (
             <TouchableOpacity
               key={title}
               style={styles.small}
@@ -144,13 +109,13 @@ class Formation extends Component {
         <FirstModal
           showModal={firstMod}
           closeModal={this.handleFirst}
-          Lessons={Lessons}
-          fetchAllData={this.fetchAllData}
+          Lessons={lessons}
+          fetchD={this.fetchData}
         />
         <SecondModal
           secondMod={secondMod}
           closeSecondModal={this.handleSecond}
-          dourous={dourous}
+          dourous={data}
         />
         <Modal
           visible={addMod}
@@ -270,6 +235,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
+  formations: store.userState.formations,
+  lessons: store.userState.lessons,
+  data: store.userState.data,
 });
 
 export default connect(mapStateToProps, null)(Formation);

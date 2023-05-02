@@ -9,12 +9,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function FirstModal({
-  showModal,
-  closeModal,
-  Lessons,
-  fetchAllData,
-}) {
+export default function FirstModal({ showModal, closeModal, Lessons, fetchD }) {
   return (
     <Modal visible={showModal} animationType="slide">
       <View style={styles.modalContainer}>
@@ -31,7 +26,7 @@ export default function FirstModal({
           {Lessons.map((cours) => (
             <TouchableOpacity
               style={styles.small}
-              onPress={() => fetchAllData(cours)}
+              onPress={() => fetchD(cours)}
               key={cours}
             >
               <Text style={{ color: "white" }}>{cours}</Text>

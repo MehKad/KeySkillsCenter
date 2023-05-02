@@ -1,8 +1,17 @@
-import { USER_STATE_CHANGE, FETCH_CURRENT_USER_LESSONS } from "../constants";
+import {
+  USER_STATE_CHANGE,
+  FETCH_CURRENT_USER_LESSONS,
+  FETCH_ALL_FORMATIONS,
+  FETCH_ALL_LESSONS,
+  FETCH_DATA,
+} from "../constants";
 
 const initialState = {
   currentUser: null,
   testtest: [],
+  formations: [],
+  lessons: [],
+  data: {},
 };
 
 export const user = (state = initialState, action) => {
@@ -17,6 +26,24 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         testtest: action.testtest,
+      };
+      break;
+    case FETCH_ALL_FORMATIONS:
+      return {
+        ...state,
+        formations: action.formations,
+      };
+      break;
+    case FETCH_ALL_LESSONS:
+      return {
+        ...state,
+        lessons: action.lessons,
+      };
+      break;
+    case FETCH_DATA:
+      return {
+        ...state,
+        data: action.data,
       };
       break;
     default:
