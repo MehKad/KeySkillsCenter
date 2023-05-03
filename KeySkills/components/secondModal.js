@@ -13,7 +13,6 @@ export default function SecondModal({
   addUser = async (id) => {
     try {
       const uid = firebase.auth().currentUser.uid;
-      // Check if the current user exists in the users collection
       const userRef = firebase
         .firestore()
         .collection("Lessons")
@@ -24,9 +23,8 @@ export default function SecondModal({
       if (userDoc.exists) {
         console.log(`User ${uid} already exists in ${id}`);
       } else {
-        // Add the current user to the users collection
         await userRef.set({
-          uid,
+          confirmed: false,
         });
         console.log(`User ${uid} Added to ${id}`);
       }
@@ -60,20 +58,22 @@ export default function SecondModal({
                 )}
               </View>
             ))}
-        <TouchableOpacity
-          style={{
-            backgroundColor: "blue",
-            width: "40%",
-            height: 50,
-            alignSelf: "center",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 10,
-          }}
-          onPress={() => this.addUser(current)}
-        >
-          <Text style={{ color: "white" }}>Subscribe</Text>
-        </TouchableOpacity>
+        {!currentUser.admin && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: "blue",
+              width: "40%",
+              height: 50,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 10,
+            }}
+            onPress={() => this.addUser(current)}
+          >
+            <Text style={{ color: "white" }}>Subscribe</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Modal>
   );

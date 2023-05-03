@@ -24,6 +24,7 @@ class Formation extends Component {
     secondMod: false,
     addMod: false,
     newForm: "",
+    test: "",
   };
 
   handleFirst = () => {
@@ -39,6 +40,7 @@ class Formation extends Component {
   fetchLessons = (title) => {
     const { dispatch } = this.props;
     dispatch(fetchAllLessons(title));
+    this.setState({ test: title });
     this.handleFirst();
   };
 
@@ -67,7 +69,7 @@ class Formation extends Component {
   };
 
   render() {
-    const { firstMod, secondMod, addMod } = this.state;
+    const { firstMod, secondMod, addMod, test } = this.state;
     const { currentUser, formations, lessons, data, current } = this.props;
     return (
       <View style={styles.container}>
@@ -111,6 +113,8 @@ class Formation extends Component {
           closeModal={this.handleFirst}
           Lessons={lessons}
           fetchD={this.fetchData}
+          currentUser={currentUser}
+          test={test}
         />
         <SecondModal
           secondMod={secondMod}

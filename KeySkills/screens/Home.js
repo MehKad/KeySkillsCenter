@@ -19,11 +19,12 @@ class Home extends Component {
         <Text>{currentUser.fullName}</Text>
 
         <View style={styles.cardsContainer}>
-          {testtest.map((title, index) => (
-            <TouchableOpacity style={styles.card} key={index}>
-              <Text>{title}</Text>
-            </TouchableOpacity>
-          ))}
+          {!currentUser.admin &&
+            testtest.map((title, index) => (
+              <TouchableOpacity style={styles.card} key={index}>
+                <Text>{title}</Text>
+              </TouchableOpacity>
+            ))}
         </View>
       </View>
     );
