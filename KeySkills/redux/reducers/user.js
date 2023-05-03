@@ -4,6 +4,7 @@ import {
   FETCH_ALL_FORMATIONS,
   FETCH_ALL_LESSONS,
   FETCH_DATA,
+  FETCH_CURRENT,
 } from "../constants";
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   formations: [],
   lessons: [],
   data: {},
+  current: "",
 };
 
 export const user = (state = initialState, action) => {
@@ -44,6 +46,12 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         data: action.data,
+      };
+      break;
+    case FETCH_CURRENT:
+      return {
+        ...state,
+        current: action.current,
       };
       break;
     default:

@@ -5,6 +5,7 @@ import {
   FETCH_ALL_FORMATIONS,
   FETCH_ALL_LESSONS,
   FETCH_DATA,
+  FETCH_CURRENT,
 } from "../constants";
 
 export function fetchUser() {
@@ -104,6 +105,13 @@ export const fetchAllData = (id) => {
           dourous[title] = info;
         });
         dispatch({ type: FETCH_DATA, data: dourous });
+        dispatch(getcurrent(id));
       });
+  };
+};
+
+export const getcurrent = (id) => {
+  return (dispatch) => {
+    dispatch({ type: FETCH_CURRENT, current: id });
   };
 };

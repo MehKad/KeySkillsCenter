@@ -7,3 +7,5 @@ export const FETCH_ALL_LESSONS = "FETCH_ALL_LESSONS";
 export const FETCH_ALL_FORMATIONS = "FETCH_ALL_FORMATIONS ";
 
 export const FETCH_DATA = "FETCH_DATA ";
+
+export const FETCH_CURRENT = "FETCH_CURRENT ";

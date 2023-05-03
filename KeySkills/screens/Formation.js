@@ -68,7 +68,7 @@ class Formation extends Component {
 
   render() {
     const { firstMod, secondMod, addMod } = this.state;
-    const { currentUser, formations, lessons, data } = this.props;
+    const { currentUser, formations, lessons, data, current } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -116,6 +116,8 @@ class Formation extends Component {
           secondMod={secondMod}
           closeSecondModal={this.handleSecond}
           dourous={data}
+          currentUser={currentUser}
+          current={current}
         />
         <Modal
           visible={addMod}
@@ -238,6 +240,7 @@ const mapStateToProps = (store) => ({
   formations: store.userState.formations,
   lessons: store.userState.lessons,
   data: store.userState.data,
+  current: store.userState.current,
 });
 
 export default connect(mapStateToProps, null)(Formation);
