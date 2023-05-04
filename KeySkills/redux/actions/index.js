@@ -6,6 +6,7 @@ import {
   FETCH_ALL_LESSONS,
   FETCH_DATA,
   FETCH_CURRENT,
+  FETCH_GC_USERS,
 } from "../constants";
 
 export function fetchUser() {
@@ -113,5 +114,23 @@ export const fetchAllData = (id) => {
 export const getcurrent = (id) => {
   return (dispatch) => {
     dispatch({ type: FETCH_CURRENT, current: id });
+  };
+};
+
+export const fetchGcUsers = (id) => {
+  return (dispatch) => {
+    const test = firebase
+      .firestore()
+      .collection("Lessons")
+      .doc(id)
+      .collection("users");
+    const users = [];
+
+    test.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        users.push(doc.id);
+      });
+      dispatch({ type: FETCH_GC_USERS, users: users });
+    });
   };
 };

@@ -9,3 +9,5 @@ export const FETCH_ALL_FORMATIONS = "FETCH_ALL_FORMATIONS ";
 export const FETCH_DATA = "FETCH_DATA ";
 
 export const FETCH_CURRENT = "FETCH_CURRENT ";
+
+export const FETCH_GC_USERS = "FETCH_GC_USERS ";
