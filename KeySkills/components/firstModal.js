@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -8,7 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { AnimatedFAB } from "react-native-paper";
+import { AnimatedFAB, TextInput } from "react-native-paper";
 import firebase from "firebase/compat";
 
 export default function FirstModal({
@@ -19,40 +19,59 @@ export default function FirstModal({
   currentUser,
   test,
 }) {
-  addLesson = (id) => {
-    console.log(id);
+  const [lessonName, setLessonName] = useState("");
+
+  const [lessonModalVisible, setLessonModalVisible] = useState(false);
+
+  const handleSave = (test) => {
+    setLessonName(lessonName);
+    addLesson(test);
+    closeLessonModal();
+  };
+
+  const openLessonModal = () => {
+    setLessonModalVisible(true);
+  };
+
+  const closeLessonModal = () => {
+    setLessonModalVisible(false);
+  };
+
+  const addLesson = (id) => {
     firebase
       .firestore()
       .collection("Lessons")
-      .add({
+      .doc(lessonName)
+      .set({
         [id]: true,
       })
-      .then((lessonRef) => {
-        console.log("Lesson document written with ID: ", lessonRef.id);
+      .then(() => {
+        console.log(`Lesson document "${lessonName}" written with ID: ${id}`);
 
-        // Create the "users" sub-collection within the lesson document
         const usersCollection = firebase
           .firestore()
           .collection("Lessons")
-          .doc(lessonRef.id)
+          .doc(lessonName)
           .collection("users");
-        usersCollection
-          .add({})
-          .then((userRef) => {
+        const defaultUserDoc = usersCollection.doc(
+          "zWAp3jOoiea0sqW4rvi3laswbl22"
+        );
+        defaultUserDoc
+          .set({})
+          .then(() => {
             console.log(
-              "Users sub-collection document written with ID: ",
-              userRef.id
+              `Default user document created in the "users" sub-collection for lesson "${lessonName}"`
             );
           })
           .catch((error) => {
             console.error(
-              "Error adding document to users sub-collection: ",
+              `Error creating default user document in the "users" sub-collection for lesson "${lessonName}":`,
               error
             );
           });
       })
       .catch((error) => {
-        console.error("Error adding lesson document: ", error);
+        console.error(`Error adding lesson document "${lessonName}": `, error);
       });
   };
 
@@ -84,14 +103,42 @@ export default function FirstModal({
             icon={"plus"}
             label={"Add"}
             onPress={() => {
-              this.addLesson(test);
+              openLessonModal();
             }}
+            // onPress={openLessonModal}
             animateFrom={"right"}
             iconMode={"dynamic"}
             style={styles.fabStyle}
           />
         )}
       </View>
+      <Modal visible={lessonModalVisible} animationType="slide" transparent>
+        <TouchableOpacity style={styles.overlay} onPress={closeLessonModal}>
+          <View style={styles.addMod}>
+            <AntDesign
+              name="close"
+              size={24}
+              onPress={closeLessonModal}
+              style={{ alignSelf: "flex-end" }}
+            />
+            <View style={styles.header}>
+              <Text style={styles.title}>Add Lesson : </Text>
+            </View>
+            <TextInput
+              style={{ width: "90%" }}
+              placeholder="Lesson name"
+              onChangeText={(text) => setLessonName(text)}
+              maxLength={50}
+            />
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={() => handleSave(test)}
+            >
+              <Text style={{ color: "white" }}>Save</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </Modal>
   );
 }
@@ -114,6 +161,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
+  addMod: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: "40%",
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    alignItems: "center",
+    paddingTop: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -132,5 +192,21 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     backgroundColor: "yellow",
+  },
+  saveButton: {
+    backgroundColor: "blue",
+    borderRadius: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 60,
+    paddingRight: 60,
+    marginTop: 20,
+    alignSelf: "center",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
