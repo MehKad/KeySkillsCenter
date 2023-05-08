@@ -25,6 +25,7 @@ export default function SecondModal({
       } else {
         await userRef.set({
           confirmed: false,
+          fullName: currentUser.fullName,
         });
         console.log(`User ${uid} Added to ${id}`);
       }

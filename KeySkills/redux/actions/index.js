@@ -7,6 +7,7 @@ import {
   FETCH_DATA,
   FETCH_CURRENT,
   FETCH_GC_USERS,
+  FETCH_ADMIN_LESSONS,
 } from "../constants";
 
 export function fetchUser() {
@@ -21,6 +22,7 @@ export function fetchUser() {
           let currentUser = snapshot.data();
           dispatch({ type: USER_STATE_CHANGE, currentUser });
           dispatch(fetchAllFormation());
+          dispatch(fetchAdminLessons());
           if (!currentUser.admin) {
             dispatch(fetchCurrentUserLessons(uid));
           }
@@ -92,6 +94,18 @@ export const fetchAllLessons = (name) => {
   };
 };
 
+export const fetchAdminLessons = () => {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("Lessons")
+      .onSnapshot((snapshot) => {
+        const lessos = snapshot.docs.map((name) => name.id);
+        dispatch({ type: FETCH_ADMIN_LESSONS, lessonsAdmin: lessos });
+      });
+  };
+};
+
 export const fetchAllData = (id) => {
   return (dispatch) => {
     firebase
@@ -126,11 +140,16 @@ export const fetchGcUsers = (id) => {
       .collection("users");
     const users = [];
 
-    test.get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        users.push({ id: doc.id, data: doc.data() });
+    test
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          users.push({ id: doc.id, data: doc.data() });
+        });
+        dispatch({ type: FETCH_GC_USERS, users: users });
+      })
+      .catch((error) => {
+        console.error(error);
       });
-      dispatch({ type: FETCH_GC_USERS, users: users });
-    });
   };
 };

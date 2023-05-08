@@ -11,3 +11,5 @@ export const FETCH_DATA = "FETCH_DATA ";
 export const FETCH_CURRENT = "FETCH_CURRENT ";
 
 export const FETCH_GC_USERS = "FETCH_GC_USERS ";
+
+export const FETCH_ADMIN_LESSONS = "FETCH_ADMIN_LESSONS ";

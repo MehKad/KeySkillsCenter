@@ -6,6 +6,7 @@ import {
   FETCH_DATA,
   FETCH_CURRENT,
   FETCH_GC_USERS,
+  FETCH_ADMIN_LESSONS,
 } from "../constants";
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   data: {},
   current: "",
   users: [],
+  lessonsAdmin: [],
 };
 
 export const user = (state = initialState, action) => {
@@ -60,6 +62,12 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         users: action.users,
+      };
+      break;
+    case FETCH_ADMIN_LESSONS:
+      return {
+        ...state,
+        lessonsAdmin: action.lessonsAdmin,
       };
       break;
     default:
