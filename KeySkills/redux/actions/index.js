@@ -128,7 +128,7 @@ export const fetchGcUsers = (id) => {
 
     test.get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        users.push(doc.id);
+        users.push({ id: doc.id, data: doc.data() });
       });
       dispatch({ type: FETCH_GC_USERS, users: users });
     });

@@ -1,12 +1,18 @@
-import { StyleSheet, View, Modal } from "react-native";
+import { StyleSheet, View, Modal, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import firebase from "firebase/compat";
 
 import { GiftedChat } from "react-native-gifted-chat";
 
-export default function chatModal({ close, groups, show, users, current }) {
+export default function ChatModal({ close, groups, show, users, current }) {
   const [messages, setMessages] = useState([]);
+
+  const currentUser = users.find(
+    (user) => user.id === firebase.auth().currentUser.uid
+  );
+
+  const isCurrentUserConfirmed = currentUser?.data?.confirmed;
 
   const fetchMessage = () => {
     const messagesRef = firebase
@@ -56,24 +62,36 @@ export default function chatModal({ close, groups, show, users, current }) {
 
   return (
     <Modal visible={show} animationType="slide" onRequestClose={close}>
-      <View style={styles.modalContent}>
-        <AntDesign
-          name="close"
-          size={24}
-          onPress={close}
-          style={styles.closeButton}
-        />
-        <GiftedChat
-          showUserAvatar
-          messages={messages}
-          onSend={(messages) => onSend(messages)}
-          user={{
-            _id: firebase.auth().currentUser.uid,
-            name: current.fullName,
-            avatar: current.profilePic,
-          }}
-        />
-      </View>
+      {isCurrentUserConfirmed ? (
+        <View style={styles.modalContent}>
+          <AntDesign
+            name="close"
+            size={24}
+            onPress={close}
+            style={styles.closeButton}
+          />
+          <GiftedChat
+            showUserAvatar
+            messages={messages}
+            onSend={(messages) => onSend(messages)}
+            user={{
+              _id: firebase.auth().currentUser.uid,
+              name: current.fullName,
+              avatar: current.profilePic,
+            }}
+          />
+        </View>
+      ) : (
+        <View style={styles.modalContent}>
+          <AntDesign
+            name="close"
+            size={24}
+            onPress={close}
+            style={styles.closeButton}
+          />
+          <Text style={styles.title}>You need to be verified first.</Text>
+        </View>
+      )}
     </Modal>
   );
 }
@@ -85,5 +103,13 @@ const styles = StyleSheet.create({
   closeButton: {
     alignSelf: "flex-end",
     padding: 25,
+  },
+  title: {
+    fontSize: 20,
+    alignSelf: "center",
+    padding: 10,
+    paddingTop: 25,
+    fontFamily: "serif",
+    fontWeight: "bold",
   },
 });

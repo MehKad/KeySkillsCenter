@@ -47,20 +47,7 @@ class Chat extends Component {
 
     return (
       <View style={styles.container}>
-        {testtest && (
-          <Text
-            style={{
-              fontSize: 20,
-              alignSelf: "center",
-              padding: 10,
-              paddingTop: 25,
-              fontFamily: "serif",
-              fontWeight: "bold",
-            }}
-          >
-            Your groups are :{" "}
-          </Text>
-        )}
+        {testtest && <Text style={styles.grouptitle}>Your groups are : </Text>}
         <View style={styles.cardsContainer}>
           {!currentUser.admin &&
             testtest.map((title, index) => (
@@ -112,6 +99,14 @@ const styles = StyleSheet.create({
   closeButton: {
     alignSelf: "flex-end",
     padding: 25,
+  },
+  grouptitle: {
+    fontSize: 20,
+    alignSelf: "center",
+    padding: 10,
+    paddingTop: 25,
+    fontFamily: "serif",
+    fontWeight: "bold",
   },
 });
 
