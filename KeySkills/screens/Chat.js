@@ -47,6 +47,20 @@ class Chat extends Component {
 
     return (
       <View style={styles.container}>
+        {testtest && (
+          <Text
+            style={{
+              fontSize: 20,
+              alignSelf: "center",
+              padding: 10,
+              paddingTop: 25,
+              fontFamily: "serif",
+              fontWeight: "bold",
+            }}
+          >
+            Your groups are :{" "}
+          </Text>
+        )}
         <View style={styles.cardsContainer}>
           {!currentUser.admin &&
             testtest.map((title, index) => (
@@ -66,6 +80,7 @@ class Chat extends Component {
             groups={testtest[selectedChat]}
             close={this.closeModal}
             users={users}
+            current={currentUser}
           />
         )}
       </View>
@@ -83,7 +98,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: "red",
+    backgroundColor: "lightgreen",
     borderRadius: 10,
     width: "100%",
     height: 50,
