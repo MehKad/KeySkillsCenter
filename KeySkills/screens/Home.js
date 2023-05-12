@@ -1,4 +1,6 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { AntDesign } from "@expo/vector-icons";
 import {
   Text,
   StyleSheet,
@@ -8,24 +10,34 @@ import {
   Image,
   Modal,
 } from "react-native";
-import { connect } from "react-redux";
-import { AntDesign } from "@expo/vector-icons";
 import { fetchGcUsers } from "../redux/actions";
 import firebase from "firebase/compat";
 
-function Home(props) {
-  const { currentUser, lessonsAdmin, dispatch, users: propsUsers } = props;
-  const [showModal, setShowModal] = useState(false);
-  const [selectedFormation, setSelectedFormation] = useState(null);
-  const [users, setUsers] = useState([]);
+class Home extends Component {
+  constructor(props) {
+    super(props);
 
-  const handleFormationPress = (formation) => {
-    setSelectedFormation(formation);
-    setShowModal(true);
+    this.state = {
+      showModal: false,
+      selectedFormation: null,
+      users: [],
+      second: false,
+    };
+  }
+
+  handleFormationPress = (formation) => {
+    const { dispatch } = this.props;
+    this.setState({ selectedFormation: formation, showModal: true });
     dispatch(fetchGcUsers(formation));
   };
 
-  const removeUser = (id) => {
+  handleUserPress = (index) => {
+    const { testtest } = this.props;
+    this.setState({ selectedFormation: testtest[index], second: true });
+  };
+
+  removeUser = (id) => {
+    const { selectedFormation, users } = this.state;
     firebase
       .firestore()
       .collection("Lessons")
@@ -34,7 +46,8 @@ function Home(props) {
       .doc(id)
       .delete()
       .then(() => {
-        setUsers(users.filter((user) => user.id !== id));
+        const updatedUsers = users.filter((user) => user.id !== id);
+        this.setState({ users: updatedUsers });
         console.log("User deleted successfully");
       })
       .catch((error) => {
@@ -42,7 +55,8 @@ function Home(props) {
       });
   };
 
-  const verify = (id) => {
+  verify = (id) => {
+    const { selectedFormation, users } = this.state;
     firebase
       .firestore()
       .collection("Lessons")
@@ -53,21 +67,20 @@ function Home(props) {
         confirmed: true,
       })
       .then(() => {
-        setUsers(
-          users.map((user) => {
-            if (user.id === id) {
-              return {
-                ...user,
-                data: {
-                  ...user.data,
-                  confirmed: true,
-                },
-              };
-            } else {
-              return user;
-            }
-          })
-        );
+        const updatedUsers = users.map((user) => {
+          if (user.id === id) {
+            return {
+              ...user,
+              data: {
+                ...user.data,
+                confirmed: true,
+              },
+            };
+          } else {
+            return user;
+          }
+        });
+        this.setState({ users: updatedUsers });
         console.log("Updated successfully");
       })
       .catch((error) => {
@@ -75,7 +88,8 @@ function Home(props) {
       });
   };
 
-  const remove = (id) => {
+  remove = (id) => {
+    const { selectedFormation, users } = this.state;
     firebase
       .firestore()
       .collection("Lessons")
@@ -86,21 +100,20 @@ function Home(props) {
         confirmed: false,
       })
       .then(() => {
-        setUsers(
-          users.map((user) => {
-            if (user.id === id) {
-              return {
-                ...user,
-                data: {
-                  ...user.data,
-                  confirmed: false,
-                },
-              };
-            } else {
-              return user;
-            }
-          })
-        );
+        const updatedUsers = users.map((user) => {
+          if (user.id === id) {
+            return {
+              ...user,
+              data: {
+                ...user.data,
+                confirmed: false,
+              },
+            };
+          } else {
+            return user;
+          }
+        });
+        this.setState({ users: updatedUsers });
         console.log("Updated successfully");
       })
       .catch((error) => {
@@ -108,79 +121,121 @@ function Home(props) {
       });
   };
 
-  useEffect(() => {
-    if (propsUsers !== users) {
-      setUsers(propsUsers);
+  componentDidMount() {
+    const { propsUsers } = this.props;
+    if (propsUsers) {
+      this.setState({ users: propsUsers });
     }
-  }, [propsUsers]);
+  }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={{ uri: currentUser.profilePic }} style={styles.img} />
-        <Text style={styles.title}>Welcome back {currentUser.fullName}</Text>
-      </View>
-      {currentUser.admin && (
-        <View style={styles.lescours}>
-          <Text style={styles.desc}>
-            Click on One of the following Lessons to see its users:
-          </Text>
-          {lessonsAdmin.map((title) => (
-            <TouchableOpacity
-              key={title}
-              style={styles.small}
-              onPress={() => handleFormationPress(title)}
-            >
-              <Text style={{ color: "white" }} key={title}>
-                {title}
-              </Text>
-            </TouchableOpacity>
-          ))}
+  componentDidUpdate(prevProps) {
+    const { propsUsers } = this.props;
+    if (propsUsers !== prevProps.propsUsers) {
+      this.setState({ users: propsUsers });
+    }
+  }
+
+  render() {
+    const { currentUser, lessonsAdmin, testtest } = this.props;
+    const { showModal, selectedFormation, users, second } = this.state;
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={{ uri: currentUser.profilePic }} style={styles.img} />
+          <Text style={styles.title}>Welcome back {currentUser.fullName}</Text>
         </View>
-      )}
-      <Modal visible={showModal} animationType="slide">
-        <View style={styles.modalContainer}>
-          <AntDesign
-            name="close"
-            size={24}
-            onPress={() => setShowModal(false)}
-            style={{ alignSelf: "flex-end", marginBottom: 10 }}
-          />
-          <Text style={styles.modalTitle}>{selectedFormation}</Text>
-          <Text style={styles.modalSubtitle}>User List</Text>
-          {users.map((user) => (
-            <View key={user.id} style={styles.userContainer}>
-              <Text style={styles.userName}>{user.data.fullName}</Text>
-              <View style={styles.userActions}>
+        {currentUser.admin && (
+          <View style={styles.lescours}>
+            <Text style={styles.desc}>
+              Click on One of the following Lessons to see its users:
+            </Text>
+            {lessonsAdmin.map((title) => (
+              <TouchableOpacity
+                key={title}
+                style={styles.small}
+                onPress={() => this.handleFormationPress(title)}
+              >
+                <Text style={{ color: "white" }} key={title}>
+                  {title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+        {!currentUser.admin && (
+          <View>
+            <Text style={styles.desc}>
+              Here's the list of your currently listed lessons :
+            </Text>
+            {testtest.map((title, index) => (
+              <View key={index}>
                 <TouchableOpacity
-                  onPress={() => removeUser(user.id)}
-                  style={styles.userAction}
+                  style={styles.card}
+                  key={index}
+                  onPress={() => this.handleUserPress(index)}
                 >
-                  <AntDesign name="delete" size={24} color="white" />
+                  <Text>{title}</Text>
                 </TouchableOpacity>
-                {!user.data.confirmed && (
-                  <TouchableOpacity
-                    onPress={() => verify(user.id)}
-                    style={[styles.userAction, styles.userActionCancel]}
-                  >
-                    <AntDesign name="close" size={24} color="white" />
-                  </TouchableOpacity>
-                )}
-                {user.data.confirmed && (
-                  <TouchableOpacity
-                    onPress={() => remove(user.id)}
-                    style={[styles.userAction, styles.userActionConfirm]}
-                  >
-                    <AntDesign name="checksquare" size={24} color="white" />
-                  </TouchableOpacity>
-                )}
               </View>
-            </View>
-          ))}
-        </View>
-      </Modal>
-    </View>
-  );
+            ))}
+          </View>
+        )}
+        <Modal visible={showModal} animationType="slide">
+          <View style={styles.modalContainer}>
+            <AntDesign
+              name="close"
+              size={24}
+              onPress={() => this.setState({ showModal: false })}
+              style={{ alignSelf: "flex-end", marginBottom: 10 }}
+            />
+            <Text style={styles.modalTitle}>{selectedFormation}</Text>
+            <Text style={styles.modalSubtitle}>User List</Text>
+            {users.map((user) => (
+              <View key={user.id} style={styles.userContainer}>
+                <Text style={styles.userName}>{user.data.fullName}</Text>
+                <View style={styles.userActions}>
+                  <TouchableOpacity
+                    onPress={() => this.removeUser(user.id)}
+                    style={styles.userAction}
+                  >
+                    <AntDesign name="delete" size={24} color="white" />
+                  </TouchableOpacity>
+                  {!user.data.confirmed && (
+                    <TouchableOpacity
+                      onPress={() => this.verify(user.id)}
+                      style={[styles.userAction, styles.userActionCancel]}
+                    >
+                      <AntDesign name="close" size={24} color="white" />
+                    </TouchableOpacity>
+                  )}
+                  {user.data.confirmed && (
+                    <TouchableOpacity
+                      onPress={() => this.remove(user.id)}
+                      style={[styles.userAction, styles.userActionConfirm]}
+                    >
+                      <AntDesign name="checksquare" size={24} color="white" />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            ))}
+          </View>
+        </Modal>
+        <Modal visible={second} animationType="slide">
+          <View style={styles.modalContainer}>
+            <AntDesign
+              name="close"
+              size={24}
+              onPress={() => this.setState({ second: false })}
+              style={{ alignSelf: "flex-end", marginBottom: 10 }}
+            />
+            <Text>{selectedFormation} </Text>
+          </View>
+        </Modal>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -272,6 +327,15 @@ const styles = StyleSheet.create({
   userActionCancel: {
     backgroundColor: "red",
   },
+  card: {
+    backgroundColor: "lightblue",
+    borderRadius: 5,
+    width: "100%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
 });
 
 const mapStateToProps = (store) => {
@@ -279,6 +343,7 @@ const mapStateToProps = (store) => {
     currentUser: store.userState.currentUser,
     formations: store.userState.formations,
     lessonsAdmin: store.userState.lessonsAdmin,
+    testtest: store.userState.testtest,
     users: store.userState.users,
   };
 };

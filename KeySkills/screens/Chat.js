@@ -47,7 +47,9 @@ class Chat extends Component {
 
     return (
       <View style={styles.container}>
-        {testtest && <Text style={styles.grouptitle}>Your groups are : </Text>}
+        {testtest && (
+          <Text style={styles.grouptitle}>The groupChats are : </Text>
+        )}
         <View style={styles.cardsContainer}>
           {!currentUser.admin &&
             testtest.map((title, index) => (
