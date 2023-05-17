@@ -12,16 +12,19 @@ import {
 } from "react-native";
 import { fetchGcUsers } from "../redux/actions";
 import firebase from "firebase/compat";
+import { TextInput } from "react-native-paper";
 
 class Home extends Component {
   constructor(props) {
     super(props);
-
+    const { testtest } = this.props;
     this.state = {
       showModal: false,
       selectedFormation: null,
       users: [],
       second: false,
+      searchQuery: "",
+      filteredTitles: testtest,
     };
   }
 
@@ -135,9 +138,24 @@ class Home extends Component {
     }
   }
 
+  handleSearch = (query) => {
+    const { testtest } = this.props;
+    const filteredTitles = testtest.filter((title) =>
+      title.toLowerCase().includes(query.toLowerCase())
+    );
+    this.setState({ searchQuery: query, filteredTitles });
+  };
+
   render() {
-    const { currentUser, lessonsAdmin, testtest } = this.props;
-    const { showModal, selectedFormation, users, second } = this.state;
+    const { currentUser, lessonsAdmin } = this.props;
+    const {
+      showModal,
+      selectedFormation,
+      users,
+      second,
+      searchQuery,
+      filteredTitles,
+    } = this.state;
 
     return (
       <View style={styles.container}>
@@ -168,11 +186,16 @@ class Home extends Component {
             <Text style={styles.desc}>
               Here's the list of your currently listed lessons :
             </Text>
-            {testtest.map((title, index) => (
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search formations..."
+              value={searchQuery}
+              onChangeText={this.handleSearch}
+            />
+            {filteredTitles.map((title, index) => (
               <View key={index}>
                 <TouchableOpacity
                   style={styles.card}
-                  key={index}
                   onPress={() => this.handleUserPress(index)}
                 >
                   <Text>{title}</Text>
@@ -335,6 +358,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 10,
+  },
+  searchBar: {
+    backgroundColor: "white",
+    height: 30,
+    marginVertical: 10,
+    padding: 10,
   },
 });
 
