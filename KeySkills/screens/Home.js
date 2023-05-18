@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  FlatList,
+  Linking,
 } from "react-native";
 import { fetchGcUsers } from "../redux/actions";
 import firebase from "firebase/compat";
@@ -27,6 +29,7 @@ class Home extends Component {
       second: false,
       searchQuery: "",
       filteredTitles: testtest,
+      pdfFiles: [],
     };
   }
 
@@ -39,6 +42,7 @@ class Home extends Component {
   handleUserPress = (index) => {
     const { testtest } = this.props;
     this.setState({ selectedFormation: testtest[index], second: true });
+    this.handleShowedFiles(testtest[index]);
   };
 
   removeUser = (id) => {
@@ -168,6 +172,22 @@ class Home extends Component {
     }
   };
 
+  handleShowedFiles = async (id) => {
+    try {
+      const lessonRef = firebase
+        .firestore()
+        .collection("Lessons")
+        .doc(id)
+        .collection("documents");
+
+      const snapshot = await lessonRef.get();
+      const pdfFiles = snapshot.docs.map((doc) => doc.data());
+      this.setState({ pdfFiles });
+    } catch (error) {
+      console.log("Error selecting file:", error);
+    }
+  };
+
   render() {
     const { currentUser, lessonsAdmin, users } = this.props;
     const {
@@ -176,6 +196,7 @@ class Home extends Component {
       second,
       searchQuery,
       filteredTitles,
+      pdfFiles,
     } = this.state;
 
     return (
@@ -234,7 +255,7 @@ class Home extends Component {
               style={{ alignSelf: "flex-end", marginBottom: 10 }}
             />
             <Text style={styles.modalTitle}>{selectedFormation}</Text>
-            <Text style={styles.modalSubtitle}>User List</Text>
+            <Text style={styles.modalSubtitle}>User List :</Text>
             {users.map((user) => (
               <View key={user.id} style={styles.userContainer}>
                 <Text style={styles.userName}>{user.data.fullName}</Text>
@@ -264,6 +285,9 @@ class Home extends Component {
                 </View>
               </View>
             ))}
+            <Text style={styles.modalSubtitle}>
+              Pdf files for the users to have :
+            </Text>
             <TouchableOpacity
               onPress={() => this.handleFileSelect(selectedFormation)}
               style={styles.selectFileButton}
@@ -280,7 +304,23 @@ class Home extends Component {
               onPress={() => this.setState({ second: false })}
               style={{ alignSelf: "flex-end", marginBottom: 10 }}
             />
-            <Text>{selectedFormation} </Text>
+            <Text style={styles.modalTitle}>{selectedFormation} </Text>
+            <Text style={styles.desc}>
+              Here's this formation's documents that you need to print out asap
+            </Text>
+            <FlatList
+              data={pdfFiles}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.pdfItem}
+                  onPress={() => Linking.openURL(item.uri)}
+                >
+                  <AntDesign name="pdffile1" size={24} color="black" />
+                  <Text style={styles.pdfFileName}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
           </View>
         </Modal>
       </View>
@@ -330,6 +370,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     fontWeight: "bold",
+    padding: 10,
   },
   modalContainer: {
     flex: 1,
@@ -404,6 +445,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  pdfItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  pdfFileName: {
+    marginLeft: 10,
+    fontSize: 16,
   },
 });
 
