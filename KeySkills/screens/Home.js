@@ -326,21 +326,29 @@ class Home extends Component {
               style={{ alignSelf: "flex-end", marginBottom: 10 }}
             />
             <Text style={styles.modalTitle}>{selectedFormation} </Text>
-            <Text style={styles.desc}>
-              Here's this formation's documents that you need to print out asap
-            </Text>
             <FlatList
               data={pdfFiles}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.pdfItem}
-                  onPress={() => Linking.openURL(item.downloadURL)}
-                >
-                  <AntDesign name="pdffile1" size={24} color="black" />
-                  <Text style={styles.pdfFileName}>{item.name}</Text>
-                </TouchableOpacity>
+                <View>
+                  <Text style={styles.desc}>
+                    Here's this formation's documents that you need to print out
+                    asap
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.pdfItem}
+                    onPress={() => Linking.openURL(item.downloadURL)}
+                  >
+                    <AntDesign name="pdffile1" size={24} color="black" />
+                    <Text style={styles.pdfFileName}>{item.name}</Text>
+                  </TouchableOpacity>
+                </View>
               )}
+              ListEmptyComponent={
+                <Text style={styles.desc}>
+                  There's no available pdfs right now
+                </Text>
+              }
             />
           </View>
         </Modal>
@@ -470,6 +478,7 @@ const styles = StyleSheet.create({
   pdfItem: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 10,
   },
   pdfFileName: {
