@@ -18,6 +18,9 @@ import { TextInput } from "react-native-paper";
 
 import * as DocumentPicker from "expo-document-picker";
 
+import "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -159,13 +162,31 @@ class Home extends Component {
       });
       if (result.type === "success") {
         const { uri, name } = result;
-        const fileRef = firebase
+
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const childPath = `docs/${id}/${name}`;
+
+        const storage = getStorage();
+        const storageRef = ref(storage, childPath);
+
+        const snapshot = await uploadBytes(storageRef, blob);
+
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        console.log(downloadURL);
+        const fileData = {
+          name,
+          downloadURL,
+        };
+
+        const fileDocRef = firebase
           .firestore()
           .collection("Lessons")
           .doc(id)
           .collection("documents")
           .doc();
-        await fileRef.set({ uri, name });
+
+        await fileDocRef.set(fileData);
       }
     } catch (error) {
       console.log("Error selecting file:", error);
@@ -314,7 +335,7 @@ class Home extends Component {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.pdfItem}
-                  onPress={() => Linking.openURL(item.uri)}
+                  onPress={() => Linking.openURL(item.downloadURL)}
                 >
                   <AntDesign name="pdffile1" size={24} color="black" />
                   <Text style={styles.pdfFileName}>{item.name}</Text>
