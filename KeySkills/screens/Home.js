@@ -14,6 +14,8 @@ import { fetchGcUsers } from "../redux/actions";
 import firebase from "firebase/compat";
 import { TextInput } from "react-native-paper";
 
+import * as DocumentPicker from "expo-document-picker";
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -146,12 +148,31 @@ class Home extends Component {
     this.setState({ searchQuery: query, filteredTitles });
   };
 
+  handleFileSelect = async (id) => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+      });
+      if (result.type === "success") {
+        const { uri, name } = result;
+        const fileRef = firebase
+          .firestore()
+          .collection("Lessons")
+          .doc(id)
+          .collection("documents")
+          .doc();
+        await fileRef.set({ uri, name });
+      }
+    } catch (error) {
+      console.log("Error selecting file:", error);
+    }
+  };
+
   render() {
-    const { currentUser, lessonsAdmin } = this.props;
+    const { currentUser, lessonsAdmin, users } = this.props;
     const {
       showModal,
       selectedFormation,
-      users,
       second,
       searchQuery,
       filteredTitles,
@@ -243,6 +264,12 @@ class Home extends Component {
                 </View>
               </View>
             ))}
+            <TouchableOpacity
+              onPress={() => this.handleFileSelect(selectedFormation)}
+              style={styles.selectFileButton}
+            >
+              <Text style={styles.selectFileButtonText}>Select PDF File</Text>
+            </TouchableOpacity>
           </View>
         </Modal>
         <Modal visible={second} animationType="slide">
@@ -364,6 +391,19 @@ const styles = StyleSheet.create({
     height: 30,
     marginVertical: 10,
     padding: 10,
+  },
+  selectFileButton: {
+    backgroundColor: "#3498db",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  selectFileButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
