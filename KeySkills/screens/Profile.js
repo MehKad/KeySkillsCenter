@@ -7,6 +7,7 @@ import {
   StatusBar,
   Modal,
   TextInput,
+  Alert,
 } from "react-native";
 import moment from "moment";
 import React, { Component } from "react";
@@ -83,7 +84,7 @@ class Profile extends Component {
       .then(() => {
         this.setState({ posting: false });
         this.toggleModal();
-        console.log("user successfully modified");
+        Alert.alert("Edit", "user successfully modified");
       });
   };
 
@@ -108,6 +109,11 @@ class Profile extends Component {
             <Text style={styles.datatext}>
               Phone number: {currentUser.phone}
             </Text>
+            {currentUser.Admin ? (
+              <Text style={styles.datatext}>You are an Admin</Text>
+            ) : (
+              <Text style={styles.datatext}>You are a Student</Text>
+            )}
           </View>
         </View>
 
@@ -135,7 +141,10 @@ class Profile extends Component {
               style={styles.closeIcon}
             />
             <View style={styles.content}>
-              <TouchableOpacity onPress={this.handlePickImage}>
+              <TouchableOpacity
+                onPress={this.handlePickImage}
+                style={styles.pickimg}
+              >
                 <Image source={{ uri: prevImage }} style={styles.image} />
               </TouchableOpacity>
               <View style={styles.inputContainer}>
@@ -154,7 +163,7 @@ class Profile extends Component {
                 />
                 <TextInput
                   style={styles.input}
-                  placeholder="email"
+                  placeholder="Email"
                   value={prevEmail}
                   keyboardType="email-address"
                   onChangeText={(prevEmail) => this.setState({ prevEmail })}
@@ -162,7 +171,7 @@ class Profile extends Component {
                 <TextInput
                   style={styles.input}
                   value={prevDate}
-                  placeholder="date of birth DD/MM/YYYY"
+                  placeholder="Date of Birth (DD/MM/YYYY)"
                   onChangeText={(prevDate) => this.setState({ prevDate })}
                 />
               </View>
@@ -171,7 +180,7 @@ class Profile extends Component {
               style={styles.button}
               onPress={this.handleSaveChanges}
             >
-              <Text>Save</Text>
+              <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -274,14 +283,11 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
   },
-  closeIcon: {
-    alignSelf: "flex-end",
-  },
   input: {
-    borderWidth: 2,
+    borderWidth: 1,
     padding: 8,
     width: 330,
-    borderColor: "rgba(232, 236, 244, 1)",
+    borderColor: "grey",
     borderRadius: 8,
     marginTop: "5%",
   },
@@ -295,7 +301,30 @@ const styles = StyleSheet.create({
     paddingLeft: 120,
     paddingRight: 120,
     marginTop: "5%",
-    marginBottom: "10%",
+    marginBottom: "20%",
+  },
+  closeIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inputContainer: {
+    width: "80%",
+    marginTop: "20%",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  pickimg: {
+    top: 0,
+    position: "absolute",
   },
 });
 

@@ -71,7 +71,7 @@ export default function ChatModal({ close, groups, show, users, current }) {
             style={styles.closeButton}
           />
           <GiftedChat
-            showUserAvatar
+            // showUserAvatar
             messages={messages}
             onSend={(messages) => onSend(messages)}
             user={{
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     alignSelf: "flex-end",
-    padding: 25,
+    paddingTop: 10,
+    paddingRight: 10,
   },
   title: {
     fontSize: 20,

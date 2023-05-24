@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Image,
+  ScrollView,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import firebase from "firebase/compat";
@@ -51,6 +53,8 @@ export default function SecondModal({
           - {item}
         </Text>
       ));
+    } else if (typeof content === "string" && content.startsWith("http")) {
+      return <Image source={{ uri: content }} style={styles.image} />;
     } else {
       return <Text style={styles.content}>{content}</Text>;
     }
@@ -58,7 +62,7 @@ export default function SecondModal({
 
   return (
     <Modal visible={secondMod} animationType="slide">
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <AntDesign
           name="close"
           size={24}
@@ -66,9 +70,15 @@ export default function SecondModal({
           style={styles.closeButton}
         />
         <Text style={styles.header}>{current}</Text>
+        {dourous && dourous.image && (
+          <View style={styles.item}>{renderContent(dourous.image)}</View>
+        )}
         {dourous &&
           Object.keys(dourous)
-            .filter((title) => typeof dourous[title] !== "boolean")
+            .filter(
+              (title) =>
+                title !== "image" && typeof dourous[title] !== "boolean"
+            )
             .map((title) => (
               <View key={title} style={styles.item}>
                 <Text style={styles.title}>{title}</Text>
@@ -83,14 +93,14 @@ export default function SecondModal({
             <Text style={styles.buttonText}>Subscribe</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </ScrollView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "#fff",
     padding: 20,
   },
@@ -112,10 +122,9 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     alignSelf: "center",
-    padding: 20,
+    paddingBottom: 30,
     fontFamily: "serif",
     fontWeight: "bold",
-    marginBottom: 10,
   },
   subscribeButton: {
     backgroundColor: "blue",
@@ -131,5 +140,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  image: {
+    width: "100%",
+    height: 250,
+    alignSelf: "center",
+    marginBottom: 10,
+    borderRadius: 10,
   },
 });

@@ -325,12 +325,12 @@ class Home extends Component {
               onPress={() => this.setState({ second: false })}
               style={{ alignSelf: "flex-end", marginBottom: 10 }}
             />
-            <Text style={styles.modalTitle}>{selectedFormation} </Text>
+            <Text style={styles.modalTitle}>{selectedFormation}</Text>
             <FlatList
               data={pdfFiles}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View>
+                <View key={item.id}>
                   <Text style={styles.desc}>
                     Here's this formation's documents that you need to print out
                     asap
@@ -346,7 +346,7 @@ class Home extends Component {
               )}
               ListEmptyComponent={
                 <Text style={styles.desc}>
-                  There's no available pdfs right now
+                  There's no available PDFs right now
                 </Text>
               }
             />
