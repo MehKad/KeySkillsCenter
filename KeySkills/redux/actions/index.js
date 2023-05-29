@@ -40,6 +40,7 @@ export const fetchCurrentUserLessons = (uid) => {
       .collection("Lessons")
       .onSnapshot((snapshot) => {
         const names = snapshot.docs.map((test) => test.id);
+        const images = snapshot.docs.map((test) => test.data().image);
         const promises = names.map((id) => {
           return firebase
             .firestore()
@@ -56,7 +57,7 @@ export const fetchCurrentUserLessons = (uid) => {
               const id = names[index];
               querySnapshot.forEach((doc) => {
                 if (doc.id === uid) {
-                  testtest.push(id);
+                  testtest.push({ name: id, image: images[index] });
                 }
               });
             });

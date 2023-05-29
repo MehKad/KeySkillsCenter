@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Image,
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -22,8 +23,9 @@ class Chat extends Component {
   }
 
   openChat = (index) => {
-    const { dispatch, testtest, users } = this.props;
-    dispatch(fetchGcUsers(testtest[index]));
+    const { dispatch, testtest } = this.props;
+    const testtitles = testtest.map((item) => item.name);
+    dispatch(fetchGcUsers(testtitles[index]));
     this.openModal(index);
   };
 
@@ -45,20 +47,23 @@ class Chat extends Component {
     const { testtest, currentUser, users } = this.props;
     const { modalVisible, selectedChat } = this.state;
 
+    const testtitles = testtest.map((item) => item.name);
+
     return (
       <View style={styles.container}>
-        {testtest && (
-          <Text style={styles.grouptitle}>The groupChats are : </Text>
+        {testtest.length > 0 && (
+          <Text style={styles.grouptitle}>Chat groups</Text>
         )}
         <View style={styles.cardsContainer}>
           {!currentUser.admin &&
-            testtest.map((title, index) => (
+            testtest.map((item, index) => (
               <TouchableOpacity
                 style={styles.card}
                 key={index}
                 onPress={() => this.openChat(index)}
               >
-                <Text>{title}</Text>
+                <Text style={styles.title}>{item.name}</Text>
+                <Image source={{ uri: item.image }} style={styles.cardImage} />
               </TouchableOpacity>
             ))}
         </View>
@@ -66,7 +71,7 @@ class Chat extends Component {
         {modalVisible && (
           <ChatModal
             show={modalVisible}
-            groups={testtest[selectedChat]}
+            groups={testtitles[selectedChat]}
             close={this.closeModal}
             users={users}
             current={currentUser}
@@ -91,9 +96,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "100%",
     height: 50,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 10,
+    marginVertical: 15,
   },
   modalContent: {
     height: "100%",
@@ -107,8 +112,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 10,
     paddingTop: 25,
-    fontFamily: "serif",
     fontWeight: "bold",
+  },
+  cardImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    marginRight: 20,
+  },
+  title: {
+    flex: 1,
+    textAlign: "center",
   },
 });
 

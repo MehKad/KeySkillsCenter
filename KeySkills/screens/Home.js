@@ -31,7 +31,7 @@ class Home extends Component {
       users: [],
       second: false,
       searchQuery: "",
-      filteredTitles: testtest,
+      filteredTitles: testtest.map((item) => item.name),
       pdfFiles: [],
     };
   }
@@ -44,8 +44,9 @@ class Home extends Component {
 
   handleUserPress = (index) => {
     const { testtest } = this.props;
-    this.setState({ selectedFormation: testtest[index], second: true });
-    this.handleShowedFiles(testtest[index]);
+    const form = testtest.map((item) => item.name);
+    this.setState({ selectedFormation: form[index], second: true });
+    this.handleShowedFiles(form[index]);
   };
 
   removeUser = (id) => {
@@ -149,7 +150,8 @@ class Home extends Component {
 
   handleSearch = (query) => {
     const { testtest } = this.props;
-    const filteredTitles = testtest.filter((title) =>
+    const names = testtest.map((item) => item.name);
+    const filteredTitles = names.filter((title) =>
       title.toLowerCase().includes(query.toLowerCase())
     );
     this.setState({ searchQuery: query, filteredTitles });
