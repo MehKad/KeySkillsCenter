@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Modal,
   StatusBar,
+  Alert,
 } from "react-native";
 import React, { Component } from "react";
 
@@ -65,7 +66,7 @@ class Formation extends Component {
       .collection("formation")
       .doc(title)
       .delete()
-      .then(() => console.log("deleted ", title));
+      .then(() => Alert.alert("deleted ", `${title} has just been deleted`));
   };
 
   render() {

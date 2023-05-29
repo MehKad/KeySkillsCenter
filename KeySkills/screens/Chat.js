@@ -54,6 +54,13 @@ class Chat extends Component {
         {testtest.length > 0 && (
           <Text style={styles.grouptitle}>Chat groups</Text>
         )}
+
+        {testtest.length == 0 && (
+          <Text style={styles.desc}>
+            You're not subscribed to any of the offered lessons
+          </Text>
+        )}
+
         <View style={styles.cardsContainer}>
           {!currentUser.admin &&
             testtest.map((item, index) => (
@@ -66,6 +73,11 @@ class Chat extends Component {
                 <Image source={{ uri: item.image }} style={styles.cardImage} />
               </TouchableOpacity>
             ))}
+          {currentUser.admin && (
+            <Text style={styles.desc}>
+              You are a Teacher, you don't have access to the chatgroups
+            </Text>
+          )}
         </View>
 
         {modalVisible && (
@@ -92,7 +104,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    backgroundColor: "lightgreen",
+    backgroundColor: "lightblue",
     borderRadius: 10,
     width: "100%",
     height: 50,
@@ -122,6 +134,10 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
+    textAlign: "center",
+  },
+  desc: {
+    fontSize: 15,
     textAlign: "center",
   },
 });

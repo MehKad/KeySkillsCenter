@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Alert,
+  TextInput,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { AnimatedFAB, TextInput } from "react-native-paper";
+import { AnimatedFAB } from "react-native-paper";
 import firebase from "firebase/compat";
 
 export default function FirstModal({
@@ -75,6 +77,15 @@ export default function FirstModal({
       });
   };
 
+  const deleteL = (id) => {
+    firebase
+      .firestore()
+      .collection("Lessons")
+      .doc(id)
+      .delete()
+      .then(() => Alert.alert("deleted ", `${id} has just been deleted`));
+  };
+
   return (
     <Modal visible={showModal} animationType="slide">
       <View style={styles.modalContainer}>
@@ -95,6 +106,13 @@ export default function FirstModal({
               key={cours}
             >
               <Text style={{ color: "white" }}>{cours}</Text>
+              {currentUser.admin && (
+                <AntDesign
+                  name="delete"
+                  size={24}
+                  onPress={() => deleteL(cours)}
+                />
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -112,20 +130,21 @@ export default function FirstModal({
           />
         )}
       </View>
-      <Modal visible={lessonModalVisible} animationType="slide" transparent>
+      <Modal
+        visible={lessonModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={closeLessonModal}
+      >
         <TouchableOpacity style={styles.overlay} onPress={closeLessonModal}>
           <View style={styles.addMod}>
             <AntDesign
               name="close"
               size={24}
               onPress={closeLessonModal}
-              style={{ alignSelf: "flex-end" }}
+              style={{ alignSelf: "flex-end", marginBottom: 10 }}
             />
-            <View style={styles.header}>
-              <Text style={styles.title}>Add Lesson : </Text>
-            </View>
             <TextInput
-              style={{ width: "90%" }}
               placeholder="Lesson name"
               onChangeText={(text) => setLessonName(text)}
               maxLength={50}
@@ -134,7 +153,7 @@ export default function FirstModal({
               style={styles.saveButton}
               onPress={() => handleSave(test)}
             >
-              <Text style={{ color: "white" }}>Save</Text>
+              <Text style={{ color: "white" }}>Add</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -162,17 +181,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addMod: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    height: "40%",
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    alignItems: "center",
-    paddingTop: 20,
+    height: "35%",
+    padding: 20,
   },
   title: {
     fontSize: 24,
@@ -191,22 +204,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     right: 10,
-    backgroundColor: "yellow",
   },
   saveButton: {
     backgroundColor: "blue",
     borderRadius: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingLeft: 60,
-    paddingRight: 60,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 40,
+    paddingRight: 40,
     marginTop: 20,
     alignSelf: "center",
   },
   overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
 });

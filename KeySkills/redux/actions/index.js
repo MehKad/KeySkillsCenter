@@ -34,38 +34,31 @@ export function fetchUser() {
 }
 
 export const fetchCurrentUserLessons = (uid) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     firebase
       .firestore()
       .collection("Lessons")
       .onSnapshot((snapshot) => {
         const names = snapshot.docs.map((test) => test.id);
         const images = snapshot.docs.map((test) => test.data().image);
-        const promises = names.map((id) => {
+        const requests = names.map((id, index) => {
           return firebase
             .firestore()
             .collection("Lessons")
             .doc(id)
             .collection("users")
-            .get();
-        });
-
-        Promise.all(promises)
-          .then((snapshots) => {
-            let testtest = [];
-            snapshots.forEach((querySnapshot, index) => {
-              const id = names[index];
-              querySnapshot.forEach((doc) => {
-                if (doc.id === uid) {
+            .onSnapshot((snapshot) =>
+              snapshot.docs.map((doc) => {
+                if (doc.id == uid) {
+                  let previous = getState().userState.testtest;
+                  let testtest = [];
                   testtest.push({ name: id, image: images[index] });
+                  testtest = testtest.concat(previous);
+                  dispatch({ type: FETCH_CURRENT_USER_LESSONS, testtest });
                 }
-              });
-            });
-            dispatch({ type: FETCH_CURRENT_USER_LESSONS, testtest: testtest });
-          })
-          .catch((error) => {
-            console.log("Error getting user documents: ", error);
-          });
+              })
+            );
+        });
       });
   };
 };

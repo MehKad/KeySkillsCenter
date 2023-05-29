@@ -11,6 +11,7 @@ import {
   Modal,
   FlatList,
   Linking,
+  Alert,
 } from "react-native";
 import { fetchGcUsers } from "../redux/actions";
 import firebase from "firebase/compat";
@@ -24,14 +25,11 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 class Home extends Component {
   constructor(props) {
     super(props);
-    const { testtest } = this.props;
     this.state = {
       showModal: false,
       selectedFormation: null,
       users: [],
       second: false,
-      searchQuery: "",
-      filteredTitles: testtest.map((item) => item.name),
       pdfFiles: [],
     };
   }
@@ -61,7 +59,7 @@ class Home extends Component {
       .then(() => {
         const updatedUsers = users.filter((user) => user.id !== id);
         this.setState({ users: updatedUsers });
-        console.log("User deleted successfully");
+        Alert.alert("Delete", "User deleted successfully");
       })
       .catch((error) => {
         console.error(error);
@@ -94,7 +92,7 @@ class Home extends Component {
           }
         });
         this.setState({ users: updatedUsers });
-        console.log("Updated successfully");
+        Alert.alert("Verified", "Updated successfully");
       })
       .catch((error) => {
         console.error(error);
@@ -127,7 +125,7 @@ class Home extends Component {
           }
         });
         this.setState({ users: updatedUsers });
-        console.log("Updated successfully");
+        Alert.alert("Unverified", "Updated successfully");
       })
       .catch((error) => {
         console.error(error);
@@ -147,15 +145,6 @@ class Home extends Component {
       this.setState({ users: propsUsers });
     }
   }
-
-  handleSearch = (query) => {
-    const { testtest } = this.props;
-    const names = testtest.map((item) => item.name);
-    const filteredTitles = names.filter((title) =>
-      title.toLowerCase().includes(query.toLowerCase())
-    );
-    this.setState({ searchQuery: query, filteredTitles });
-  };
 
   handleFileSelect = async (id) => {
     try {
@@ -212,15 +201,8 @@ class Home extends Component {
   };
 
   render() {
-    const { currentUser, lessonsAdmin, users } = this.props;
-    const {
-      showModal,
-      selectedFormation,
-      second,
-      searchQuery,
-      filteredTitles,
-      pdfFiles,
-    } = this.state;
+    const { currentUser, lessonsAdmin, users, testtest } = this.props;
+    const { showModal, selectedFormation, second, pdfFiles } = this.state;
 
     return (
       <View style={styles.container}>
@@ -251,19 +233,19 @@ class Home extends Component {
             <Text style={styles.desc}>
               Here's the list of your currently listed lessons :
             </Text>
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search formations..."
-              value={searchQuery}
-              onChangeText={this.handleSearch}
-            />
-            {filteredTitles.map((title, index) => (
+            {testtest.map((item, index) => (
               <View key={index}>
                 <TouchableOpacity
                   style={styles.card}
                   onPress={() => this.handleUserPress(index)}
                 >
-                  <Text>{title}</Text>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.cardImage}
+                  />
+                  <Text style={{ flex: 1, textAlign: "center" }}>
+                    {item.name}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -330,7 +312,7 @@ class Home extends Component {
             <Text style={styles.modalTitle}>{selectedFormation}</Text>
             <FlatList
               data={pdfFiles}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item, index) => index.toString()} // Use the index as the key
               renderItem={({ item }) => (
                 <View key={item.id}>
                   <Text style={styles.desc}>
@@ -451,12 +433,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "lightblue",
-    borderRadius: 5,
+    borderRadius: 10,
     width: "100%",
     height: 50,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 10,
+    marginVertical: 15,
   },
   searchBar: {
     backgroundColor: "white",
@@ -486,6 +468,12 @@ const styles = StyleSheet.create({
   pdfFileName: {
     marginLeft: 10,
     fontSize: 16,
+  },
+  cardImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    marginLeft: 20,
   },
 });
 
